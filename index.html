@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VelocityType — Typing Speed Test</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== Animated background layers ===== -->
+  <div class="bg-gradient"></div>
+  <div class="particles" id="particles"></div>
+  <div class="noise-overlay"></div>
+
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="logo">
+      <span class="logo-icon">⌁</span>
+      <span class="logo-text">Velocity<span class="accent">Type</span></span>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="best-score-pill" id="bestScorePill" title="Your best WPM">
+        <span class="trophy-mini">🏆</span>
+        <span id="bestWpmDisplay">0</span> WPM Best
+      </button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <span class="toggle-icon sun">☀️</span>
+        <span class="toggle-icon moon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== Main App ===== -->
+  <main class="app-wrap">
+
+    <!-- ---- Test Screen ---- -->
+    <section class="test-screen" id="testScreen">
+
+      <!-- Duration selector + progress -->
+      <div class="control-bar glass-card">
+        <div class="duration-select" id="durationSelect">
+          <button class="duration-btn active" data-time="15">15s</button>
+          <button class="duration-btn" data-time="30">30s</button>
+          <button class="duration-btn" data-time="60">60s</button>
+        </div>
+
+        <div class="timer-display">
+          <svg class="timer-ring" viewBox="0 0 80 80">
+            <circle class="timer-ring-bg" cx="40" cy="40" r="34"></circle>
+            <circle class="timer-ring-progress" id="timerRing" cx="40" cy="40" r="34"></circle>
+          </svg>
+          <span class="timer-number" id="timeLeft">15</span>
+        </div>
+
+        <button class="restart-btn ripple-btn" id="restartBtn" title="Restart test">
+          <span class="restart-icon">⟳</span>
+        </button>
+      </div>
+
+      <!-- Live stats strip -->
+      <div class="stats-strip">
+        <div class="stat-chip glass-card">
+          <span class="stat-label">WPM</span>
+          <span class="stat-value" id="liveWpm">0</span>
+        </div>
+        <div class="stat-chip glass-card">
+          <span class="stat-label">CPM</span>
+          <span class="stat-value" id="liveCpm">0</span>
+        </div>
+        <div class="stat-chip glass-card">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-value" id="liveAccuracy">100<small>%</small></span>
+        </div>
+        <div class="stat-chip glass-card">
+          <span class="stat-label">Mistakes</span>
+          <span class="stat-value" id="liveMistakes">0</span>
+        </div>
+        <div class="stat-chip glass-card combo-chip" id="comboChip">
+          <span class="stat-label">Combo</span>
+          <span class="stat-value" id="liveCombo">0</span>
+          <span class="fire-emoji" id="fireEmoji">🔥</span>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <!-- Typing area -->
+      <div class="typing-card glass-card" id="typingCard">
+        <div class="paragraph-display" id="paragraphDisplay" tabindex="0"></div>
+        <input type="text" id="hiddenInput" class="hidden-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+        <div class="focus-hint" id="focusHint">Click here or start typing to begin</div>
+      </div>
+
+      <!-- XP bar -->
+      <div class="xp-section">
+        <div class="xp-label">
+          <span>Level <span id="xpLevel">1</span></span>
+          <span id="xpText">0 / 100 XP</span>
+        </div>
+        <div class="xp-track">
+          <div class="xp-fill" id="xpFill"></div>
+        </div>
+      </div>
+
+      <div class="sound-toggle-row">
+        <label class="sound-toggle">
+          <input type="checkbox" id="soundToggle" />
+          <span class="sound-slider"></span>
+          <span class="sound-label">Typing sound</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ---- Results Screen ---- -->
+    <section class="results-screen hidden" id="resultsScreen">
+      <div class="confetti-layer" id="confettiLayer"></div>
+
+      <div class="results-card glass-card">
+        <div class="trophy-wrap">
+          <div class="trophy" id="trophyIcon">🏆</div>
+          <div class="trophy-glow"></div>
+        </div>
+
+        <h2 class="results-title">Test Complete!</h2>
+        <div class="medal-badge" id="medalBadge">Beginner</div>
+        <p class="motivation-quote" id="motivationQuote"></p>
+
+        <div class="results-grid">
+          <div class="result-card">
+            <span class="result-icon">⚡</span>
+            <span class="result-num" id="finalWpm">0</span>
+            <span class="result-label">WPM</span>
+          </div>
+          <div class="result-card">
+            <span class="result-icon">⌨</span>
+            <span class="result-num" id="finalCpm">0</span>
+            <span class="result-label">CPM</span>
+          </div>
+          <div class="result-card">
+            <span class="result-icon">🎯</span>
+            <span class="result-num" id="finalAccuracy">0<small>%</small></span>
+            <span class="result-label">Accuracy</span>
+          </div>
+          <div class="result-card">
+            <span class="result-icon">✖</span>
+            <span class="result-num" id="finalMistakes">0</span>
+            <span class="result-label">Mistakes</span>
+          </div>
+          <div class="result-card">
+            <span class="result-icon">🔥</span>
+            <span class="result-num" id="finalCombo">0</span>
+            <span class="result-label">Best Combo</span>
+          </div>
+          <div class="result-card highlight-card" id="newBestCard">
+            <span class="result-icon">🏆</span>
+            <span class="result-num" id="finalBest">0</span>
+            <span class="result-label">Best WPM</span>
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button class="primary-btn ripple-btn" id="tryAgainBtn">Try Again</button>
+          <button class="secondary-btn ripple-btn" id="changeTimeBtn">Change Duration</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <span>Built with HTML · CSS · Vanilla JS — no frameworks, no dependencies.</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
